@@ -1,0 +1,15 @@
+min_sensor_dist: .2
+self_see_default_padding: .1
+self_see_default_scale: 1.0
+self_see_links:
+  - name: J1
+  - name: J2
+  - name: J3
+  - name: J4
+  - name: J5
+  - name: J6
+  - name: hand_link
+  - name: mhand_body_link
+  - name: mhand_fingerA
+  - name: mhand_fingerB
+  - name: mhand_fingerC
