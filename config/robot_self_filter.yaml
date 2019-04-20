@@ -10,6 +10,6 @@ self_see_links:
   - name: J6
   - name: hand_link
   - name: mhand_body_link
-  - name: mhand_fingerA
-  - name: mhand_fingerB
-  - name: mhand_fingerC
+  - name: mhand_finger_A
+  - name: mhand_finger_B
+  - name: mhand_finger_C
