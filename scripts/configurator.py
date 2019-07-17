@@ -13,9 +13,9 @@ class RobotSelfFilterConfigurator(object):
         self.min_sensor_dist_ = rospy.get_param("~min_sensor_dist", 0.2)
         self.self_see_default_padding_ = rospy.get_param("~self_see_default_padding", 0.1)
         self.self_see_default_scale_ = rospy.get_param("~self_see_default_scale", 1.0)
-        self.keep_organized_ = rospy.get_param("~keep_organized", true)
+        self.keep_organized_ = rospy.get_param("~keep_organized", True)
         self.subsample_value_ = rospy.get_param("~subsample_value", 0.0)
-        self.use_rgb_ = rospy.get_param("~use_rgb", false)
+        self.use_rgb_ = rospy.get_param("~use_rgb", False)
         self.robot_description_semantic_ = rospy.get_param(self.semantic_param_name_)
 
     def get_linkname_list_(self):
