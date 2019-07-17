@@ -1,13 +1,13 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
-* 
+*
 *  Copyright (c) 2008, Willow Garage, Inc.
 *  All rights reserved.
-* 
+*
 *  Redistribution and use in source and binary forms, with or without
 *  modification, are permitted provided that the following conditions
 *  are met:
-* 
+*
 *   * Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
 *   * Redistributions in binary form must reproduce the above
@@ -17,7 +17,7 @@
 *   * Neither the name of the Willow Garage nor the names of its
 *     contributors may be used to endorse or promote products derived
 *     from this software without specific prior written permission.
-* 
+*
 *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -43,126 +43,122 @@
 class TestSelfFilter
 {
 public:
+  TestSelfFilter(void)
+  {
+    id_ = 1;
+    vmPub_ = nodeHandle_.advertise<visualization_msgs::Marker>("visualization_marker", 10240);
+    std::vector<robot_self_filter::LinkInfo> links;
+    robot_self_filter::LinkInfo li;
+    li.name = "base_link";
+    li.padding = .05;
+    li.scale = 1.0;
+    links.push_back(li);
+    sf_ = new robot_self_filter::SelfMask<pcl::PointXYZ>(tf_, links);
+  }
 
-    TestSelfFilter(void) 
+  ~TestSelfFilter(void)
+  {
+    delete sf_;
+  }
+
+  void gotIntersection(const tf::Vector3& pt)
+  {
+    sendPoint(pt.x(), pt.y(), pt.z());
+  }
+
+  void sendPoint(double x, double y, double z)
+  {
+    visualization_msgs::Marker mk;
+
+    mk.header.stamp = ros::Time::now();
+
+    mk.header.frame_id = "base_link";
+
+    mk.ns = "test_self_filter";
+    mk.id = id_++;
+    mk.type = visualization_msgs::Marker::SPHERE;
+    mk.action = visualization_msgs::Marker::ADD;
+    mk.pose.position.x = x;
+    mk.pose.position.y = y;
+    mk.pose.position.z = z;
+    mk.pose.orientation.w = 1.0;
+
+    mk.scale.x = mk.scale.y = mk.scale.z = 0.01;
+
+    mk.color.a = 1.0;
+    mk.color.r = 1.0;
+    mk.color.g = 0.04;
+    mk.color.b = 0.04;
+
+    mk.lifetime = ros::Duration(10);
+
+    vmPub_.publish(mk);
+  }
+
+  void run(void)
+  {
+    pcl::PointCloud<pcl::PointXYZ> in;
+
+    in.header.stamp = ros::Time::now().toNSec();
+    in.header.frame_id = "base_link";
+
+    const unsigned int N = 500000;
+    in.points.resize(N);
+    for (unsigned int i = 0; i < N; ++i)
     {
-	id_ = 1;
-	vmPub_ = nodeHandle_.advertise<visualization_msgs::Marker>("visualization_marker", 10240);
-	std::vector<robot_self_filter::LinkInfo> links;
-	robot_self_filter::LinkInfo li;
-        li.name="base_link";
-        li.padding = .05;
-        li.scale = 1.0;
-        links.push_back(li);
-	sf_ = new robot_self_filter::SelfMask<pcl::PointXYZ>(tf_, links);
+      in.points[i].x = uniform(1.5);
+      in.points[i].y = uniform(1.5);
+      in.points[i].z = uniform(1.5);
     }
 
-    ~TestSelfFilter(void)
+    for (unsigned int i = 0; i < 1000; ++i)
     {
-	delete sf_;
-    }
-    
-    void gotIntersection(const tf::Vector3 &pt)
-    {
-	sendPoint(pt.x(), pt.y(), pt.z());
-    }
-    
-    void sendPoint(double x, double y, double z)
-    {
-	visualization_msgs::Marker mk;
-
-	mk.header.stamp = ros::Time::now();
-
-	mk.header.frame_id = "base_link";
-
-	mk.ns = "test_self_filter";
-	mk.id = id_++;
-	mk.type = visualization_msgs::Marker::SPHERE;
-	mk.action = visualization_msgs::Marker::ADD;
-	mk.pose.position.x = x;
-	mk.pose.position.y = y;
-	mk.pose.position.z = z;
-	mk.pose.orientation.w = 1.0;
-
-	mk.scale.x = mk.scale.y = mk.scale.z = 0.01;
-
-	mk.color.a = 1.0;
-	mk.color.r = 1.0;
-	mk.color.g = 0.04;
-	mk.color.b = 0.04;
-	
-	mk.lifetime = ros::Duration(10);
-	
-	vmPub_.publish(mk);
+      ros::Duration(0.001).sleep();
+      ros::spinOnce();
     }
 
-    void run(void)
-    {
-        pcl::PointCloud<pcl::PointXYZ> in;
-	
-	in.header.stamp = ros::Time::now().toNSec();
-	in.header.frame_id = "base_link";
-	
-	const unsigned int N = 500000;	
-	in.points.resize(N);
-	for (unsigned int i = 0 ; i < N ; ++i)
-	{
-	    in.points[i].x = uniform(1.5);
-	    in.points[i].y = uniform(1.5);
-	    in.points[i].z = uniform(1.5);
-	}
-	
-	for (unsigned int i = 0 ; i < 1000 ; ++i)
-	{
-	    ros::Duration(0.001).sleep();
-	    ros::spinOnce();
-	}
-	
-	ros::WallTime tm = ros::WallTime::now();
-	std::vector<int> mask;
-	sf_->maskIntersection(in, "laser_tilt_mount_link", 0.01, mask, boost::bind(&TestSelfFilter::gotIntersection, this, _1) );
-	//	sf_->maskContainment(in, mask);
-	printf("%f points per second\n", (double)N/(ros::WallTime::now() - tm).toSec());
+    ros::WallTime tm = ros::WallTime::now();
+    std::vector<int> mask;
+    sf_->maskIntersection(in, "laser_tilt_mount_link", 0.01, mask,
+                          boost::bind(&TestSelfFilter::gotIntersection, this, _1));
+    //	sf_->maskContainment(in, mask);
+    printf("%f points per second\n", (double)N / (ros::WallTime::now() - tm).toSec());
 
-	
-	int k = 0;
-	for (unsigned int i = 0 ; i < mask.size() ; ++i)
-	{
-	    //	    bool v = sf_->getMaskContainment(in.points[i].x, in.points[i].y, in.points[i].z);
-	    //	    if (v != mask[i]) 
-	    //		ROS_ERROR("Mask does not match");	    
-	    if (mask[i] != robot_self_filter::INSIDE) continue;
-	    //	    sendPoint(in.points[i].x, in.points[i].y, in.points[i].z);
-	    k++;
-	}
-	
-	ros::spin();	
+    int k = 0;
+    for (unsigned int i = 0; i < mask.size(); ++i)
+    {
+      //	    bool v = sf_->getMaskContainment(in.points[i].x, in.points[i].y, in.points[i].z);
+      //	    if (v != mask[i])
+      //		ROS_ERROR("Mask does not match");
+      if (mask[i] != robot_self_filter::INSIDE)
+        continue;
+      //	    sendPoint(in.points[i].x, in.points[i].y, in.points[i].z);
+      k++;
     }
+
+    ros::spin();
+  }
 
 protected:
-    
-    double uniform(double magnitude)
-    {
-	return (2.0 * drand48() - 1.0) * magnitude;
-    }
+  double uniform(double magnitude)
+  {
+    return (2.0 * drand48() - 1.0) * magnitude;
+  }
 
-    tf::TransformListener             tf_;
-    robot_self_filter::SelfMask<pcl::PointXYZ>      *sf_;
-    ros::Publisher                    vmPub_;
-    ros::NodeHandle                   nodeHandle_;        
-    int                               id_;
+  tf::TransformListener tf_;
+  robot_self_filter::SelfMask<pcl::PointXYZ>* sf_;
+  ros::Publisher vmPub_;
+  ros::NodeHandle nodeHandle_;
+  int id_;
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "robot_self_filter");
+  ros::init(argc, argv, "robot_self_filter");
 
-    TestSelfFilter t;
-    sleep(1);
-    t.run();
-    
-    return 0;
+  TestSelfFilter t;
+  sleep(1);
+  t.run();
+
+  return 0;
 }
-
-    
-    
