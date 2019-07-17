@@ -848,7 +848,7 @@ void bodies::ConvexMesh::useDimensions(const shapes::Shape* shape)
 
         //		if (behindPlane > 0)
         //		    std::cerr << "Approximate plane: " << behindPlane << " of " << m_vertices.size() << " points are
-        //behind the plane" << std::endl;
+        // behind the plane" << std::endl;
 
         m_planes.push_back(planeEquation);
 
