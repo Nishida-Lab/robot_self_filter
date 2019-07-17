@@ -6,9 +6,9 @@
   <node pkg="robot_self_filter" type="self_filter" clear_params="true" name="self_filter" respawn="true" output="screen">
     <remap from="cloud_in" to="$(arg robot_filter_pc_src)" />
     <remap from="cloud_out" to="$(arg robot_filter_pc_dst)" />
-    <param name="use_rgb" value="$(arg use_rgb)" />
-    <param name="keep_organized" value="true"/>
-    <param name="subsample_value" type="double" value="0.0"/>
+    <!-- <param name="use_rgb" value="$(arg use_rgb)" />           -->
+    <!-- <param name="keep_organized" value="true"/>               -->
+    <!-- <param name="subsample_value" type="double" value="0.0"/> -->
   </node>
 
 </launch>
