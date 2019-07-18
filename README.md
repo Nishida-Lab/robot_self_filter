@@ -1,4 +1,4 @@
-robot_self_filter [![Build Status](https://travis-ci.com/PR2/robot_self_filter.svg?branch=indigo-devel)](https://travis-ci.org/PR2/robot_self_filter)
+robot_self_filter [![Build Status](https://api.travis-ci.com/Nishida-Lab/robot_self_filter.svg?branch=kinetic-devel)](https://travis-ci.com/Nishida-Lab/robot_self_filter)
 =====================================================================================================================================================
 
 # Usage
