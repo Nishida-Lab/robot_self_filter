@@ -79,6 +79,16 @@ install(TARGETS ${PROJECT_NAME} test_filter self_filter robot_geometric_shapes
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
+# Python scripts
+set(PYTHON_SCRIPTS
+  scripts/configurator.py
+)
+
+foreach(scripts ${PYTHON_SCRIPTS})
+  catkin_install_python(PROGRAMS ${scripts}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+endforeach(scripts)
+
 set(DIRECTORIES
   config
   launch)
