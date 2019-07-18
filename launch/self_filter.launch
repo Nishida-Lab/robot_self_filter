@@ -1,0 +1,10 @@
+<launch>
+  <arg name="robot_filter_pc_src" default="/photoneo_center/pointcloud" />
+  <arg name="robot_filter_pc_dst" default="/robot_filtered_cloud" />
+
+  <node pkg="robot_self_filter" type="self_filter" name="self_filter" respawn="true" output="screen">
+    <remap from="cloud_in" to="$(arg robot_filter_pc_src)" />
+    <remap from="cloud_out" to="$(arg robot_filter_pc_dst)" />
+  </node>
+
+</launch>
