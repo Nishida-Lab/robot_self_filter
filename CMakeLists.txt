@@ -87,7 +87,7 @@ set(PYTHON_SCRIPTS
 foreach(scripts ${PYTHON_SCRIPTS})
   catkin_install_python(PROGRAMS ${scripts}
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-endforeach(scripts)
+endforeach()
 
 set(DIRECTORIES
   config
@@ -95,4 +95,4 @@ set(DIRECTORIES
 foreach(dirs ${DIRECTORIES})
   install(DIRECTORY ${dirs}/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dirs})
-endforeach(dirs)
+endforeach()
