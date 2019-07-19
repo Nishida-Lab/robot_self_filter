@@ -37,7 +37,4 @@
 
 namespace robot_self_filter
 {
-
 }
-
-

@@ -1,14 +1,22 @@
 <launch>
-  <arg name="use_rgb" default="false" />
   <arg name="robot_filter_pc_src" default="/photoneo_center/pointcloud" />
   <arg name="robot_filter_pc_dst" default="/robot_filtered_cloud" />
+  <arg name="robot_filter_min_sensor_dist" default="0.2" />
+  <arg name="robot_filter_self_see_default_padding" default="0.1" />
+  <arg name="robot_filter_self_see_default_scale" default="1.0" />
+  <arg name="robot_filter_keep_organized" default="true" />
+  <arg name="robot_filter_subsample_value" default="0.0" />
+  <arg name="use_rgb" default="false" />
 
-  <node pkg="robot_self_filter" type="self_filter" clear_params="true" name="self_filter" respawn="true" output="screen">
-    <remap from="cloud_in" to="$(arg robot_filter_pc_src)" />
-    <remap from="cloud_out" to="$(arg robot_filter_pc_dst)" />
+  <node pkg="robot_self_filter" type="configurator.py" name="robot_self_filter_configurator" output="screen">
+    <param name="robot_filter_min_sensor_dist" value="$(arg robot_filter_min_sensor_dist)" />
+    <param name="robot_filter_self_see_default_padding" value="$(arg robot_filter_self_see_default_padding)" />
+    <param name="robot_filter_self_see_default_scale" value="$(arg robot_filter_self_see_default_scale)" />
+    <param name="robot_filter_keep_organized" value="$(arg robot_filter_keep_organized)" />
+    <param name="robot_filter_subsample_value" value="$(arg robot_filter_subsample_value)" />
     <param name="use_rgb" value="$(arg use_rgb)" />
-    <param name="keep_organized" value="true"/>
-    <param name="subsample_value" type="double" value="0.0"/>
   </node>
+
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh" name="timed_roslaunch" args="2 robot_self_filter self_filter.launch cloud_in:=$(arg robot_filter_pc_src) cloud_out:=$(arg robot_filter_pc_dst)" output="screen" />
 
 </launch>
