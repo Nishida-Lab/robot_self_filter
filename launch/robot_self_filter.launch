@@ -17,6 +17,6 @@
     <param name="use_rgb" value="$(arg use_rgb)" />
   </node>
 
-  <node pkg="timed_roslaunch" type="timed_roslaunch.sh" name="timed_roslaunch" args="2 robot_self_filter self_filter.launch cloud_in:=$(arg robot_filter_pc_src) cloud_out:=$(arg robot_filter_pc_dst)" output="screen" />
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh" name="timed_roslaunch" args="2 robot_self_filter self_filter.launch robot_filter_pc_src:=$(arg robot_filter_pc_src) robot_filter_pc_dst:=$(arg robot_filter_pc_dst)" output="screen" />
 
 </launch>
