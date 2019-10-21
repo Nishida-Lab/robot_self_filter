@@ -37,6 +37,7 @@
   <run_depend>assimp</run_depend>
   <run_depend>tinyxml</run_depend>
   <run_depend>timed_roslaunch</run_depend>
+  <run_depend>urdfdom_py</run_depend>
   <!-- <test_depend>roscpp</test_depend> -->
   <!-- <test_depend>tf</test_depend> -->
   <!-- <test_depend>filters</test_depend> -->
