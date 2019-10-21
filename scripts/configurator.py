@@ -33,14 +33,21 @@ class RobotSelfFilterConfigurator(object):
 
     def link_configure_(self):
         see_linkname_list = self.get_linkname_list_()
+
         if not see_linkname_list:
             rospy.logerr("links not found")
+        
         self_see_links = rospy.get_param("~see_link_names", see_linkname_list)
+
+        see_list = [i.values() for i in see_linkname_list]
+        for link in self_see_links:
+            if link.values() not in see_list:
+                rospy.logerr("%s is not included in urdf.", link.values())
 
         ignore_linkname_list = []
         self_ignore_links = rospy.get_param("~ignore_link_names", ignore_linkname_list)
-
         ignore_list = [i.values() for i in self_ignore_links]
+        
         target_links = [i for i in self_see_links if i.values() not in ignore_list]
         return target_links
 
