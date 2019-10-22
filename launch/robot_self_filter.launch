@@ -1,22 +1,10 @@
 <launch>
-  <arg name="robot_filter_pc_src" default="/photoneo_center/pointcloud" />
-  <arg name="robot_filter_pc_dst" default="/robot_filtered_cloud" />
-  <arg name="robot_filter_min_sensor_dist" default="0.2" />
-  <arg name="robot_filter_self_see_default_padding" default="0.1" />
-  <arg name="robot_filter_self_see_default_scale" default="1.0" />
-  <arg name="robot_filter_keep_organized" default="true" />
-  <arg name="robot_filter_subsample_value" default="0.0" />
-  <arg name="use_rgb" default="false" />
-
   <node pkg="robot_self_filter" type="configurator.py" name="robot_self_filter_configurator" output="screen">
-    <param name="robot_filter_min_sensor_dist" value="$(arg robot_filter_min_sensor_dist)" />
-    <param name="robot_filter_self_see_default_padding" value="$(arg robot_filter_self_see_default_padding)" />
-    <param name="robot_filter_self_see_default_scale" value="$(arg robot_filter_self_see_default_scale)" />
-    <param name="robot_filter_keep_organized" value="$(arg robot_filter_keep_organized)" />
-    <param name="robot_filter_subsample_value" value="$(arg robot_filter_subsample_value)" />
-    <param name="use_rgb" value="$(arg use_rgb)" />
+    <rosparam command="load" file="$(find robot_self_filter)/config/robot_self_filter.yaml"/>
   </node>
 
+  <arg name="robot_filter_pc_src" default="/photoneo_center/pointcloud" />
+  <arg name="robot_filter_pc_dst" default="/robot_filtered_cloud" />
   <node pkg="timed_roslaunch" type="timed_roslaunch.sh" name="timed_roslaunch" args="2 robot_self_filter self_filter.launch robot_filter_pc_src:=$(arg robot_filter_pc_src) robot_filter_pc_dst:=$(arg robot_filter_pc_dst)" output="screen" />
 
 </launch>

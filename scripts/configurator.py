@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-
 import rospy
-import re
-
+from urdf_parser_py.urdf import URDF
 
 class RobotSelfFilterConfigurator(object):
     def __init__(self, namespace="/self_filter"):
@@ -25,23 +23,39 @@ class RobotSelfFilterConfigurator(object):
             self.semantic_param_name_)
 
     def get_linkname_list_(self):
-        pre_pattern = "(.*)link\ name=(.*)"
-        post_pattern = "(?<=\").*?(?=\")"
-
-        linkname_list = re.findall(post_pattern, "\n".join(
-            map(str, re.findall(pre_pattern, self.robot_description_semantic_))))
-
+        robot = URDF.from_parameter_server();
+        linkname_list = []
+        for link in robot.links:
+            link_name = link.name
+            rospy.loginfo("%s is included in the robot description.", link_name)
+            linkname_list.append({"name": link_name})
         return linkname_list
 
+    def link_configure_(self):
+        see_linkname_list = self.get_linkname_list_()
+
+        if not see_linkname_list:
+            rospy.logerr("links not found")
+        
+        self_see_links = rospy.get_param("~see_link_names", see_linkname_list)
+
+        see_list = [i.values() for i in see_linkname_list]
+        for link in self_see_links:
+            if link.values() not in see_list:
+                rospy.logerr("%s is not included in urdf.", link.values())
+
+        ignore_linkname_list = []
+        self_ignore_links = rospy.get_param("~ignore_link_names", ignore_linkname_list)
+        ignore_list = [i.values() for i in self_ignore_links]
+        
+        target_links = [i for i in self_see_links if i.values() not in ignore_list]
+        return target_links
+
     def configure(self):
-        linkname_list = self.get_linkname_list_()
-        if not linkname_list:
+        target_linkname_list = self.link_configure_()
+        if not target_linkname_list:
             rospy.logerr("links not found")
             return
-
-        linkname_param_format = []
-        for linkname in linkname_list:
-            linkname_param_format.append({"name": linkname})
 
         rospy.set_param(self.namespace_ + "/min_sensor_dist",
                         self.min_sensor_dist_)
@@ -55,7 +69,7 @@ class RobotSelfFilterConfigurator(object):
                         self.subsample_value_)
         rospy.set_param(self.namespace_ + "/use_rgb", self.use_rgb_)
         rospy.set_param(self.namespace_ + "/self_see_links",
-                        linkname_param_format)
+                        target_linkname_list)
         rospy.loginfo("configure for robot_self_filter is completed")
 
 
