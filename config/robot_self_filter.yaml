@@ -1,9 +1,13 @@
 min_sensor_dist: .2
 self_see_default_padding: .1
-self_see_default_scale: 1.0
+self_see_default_scale: 1.1
 keep_organized: true
 subsample_value: 0.0
 use_rgb: false
 # see_link_names: 
 ignore_link_names:
    - name: world
+   - name: photoneo_center
+   - name: photoneo_center_sensor_frame
+   - name: photoneo_center_camera_frame
+   - name: photoneo_center_optical_frame
