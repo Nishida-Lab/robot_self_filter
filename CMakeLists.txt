@@ -46,7 +46,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp tf filters sensor_msgs urdf roscp
 find_package(TinyXML REQUIRED)
 
 catkin_package(
-    DEPENDS bullet
+    #DEPENDS bullet
     CATKIN_DEPENDS roscpp tf filters sensor_msgs urdf resource_retriever visualization_msgs pcl_ros
     INCLUDE_DIRS include
     LIBRARIES robot_geometric_shapes ${PROJECT_NAME}
