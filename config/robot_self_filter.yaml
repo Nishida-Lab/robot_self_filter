@@ -7,3 +7,7 @@ use_rgb: false
 # see_link_names: 
 ignore_link_names:
    - name: world
+   - name: photoneo_center
+   - name: photoneo_center_sensor_frame
+   - name: photoneo_center_camera_frame
+   - name: photoneo_center_optical_frame
